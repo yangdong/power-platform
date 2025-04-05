@@ -1,38 +1,87 @@
-.App {
-  text-align: center;
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
+.ant-layout {
   min-height: 100vh;
+}
+
+.ant-layout-header {
   display: flex;
-  flex-direction: column;
   align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
 }
 
-.App-link {
-  color: #61dafb;
+.ant-card {
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
+.ant-statistic {
+  margin-bottom: 8px;
+}
+
+.site-statistic-card {
+  padding: 16px;
+  border-radius: 4px;
+}
+
+/* Fix for Leaflet maps */
+.leaflet-container {
+  height: 100%;
+  width: 100%;
+  border-radius: 4px;
+}
+
+/* Dashboard styles */
+.dashboard .ant-statistic-title {
+  font-size: 14px;
+  color: rgba(0, 0, 0, 0.65);
+}
+
+.dashboard .ant-statistic-content-value {
+  font-size: 24px;
+  font-weight: 500;
+}
+
+/* Link style for text that should look like links */
+.link-style {
+  color: #1890ff;
+  cursor: pointer;
+}
+
+.link-style:hover {
+  text-decoration: underline;
+}
+
+/* Responsive tables */
+@media (max-width: 576px) {
+  .responsive-table .ant-table {
+    overflow-x: auto;
   }
-  to {
-    transform: rotate(360deg);
+  
+  .responsive-table .ant-table-container {
+    width: 100%;
+  }
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+  .ant-layout-content {
+    padding: 16px !important;
+    margin: 16px 8px !important;
+  }
+  
+  .ant-row {
+    margin-left: -8px !important;
+    margin-right: -8px !important;
+  }
+  
+  .ant-col {
+    padding-left: 8px !important;
+    padding-right: 8px !important;
   }
 }
