@@ -197,26 +197,14 @@ const ProjectLayout: React.FC = () => {
         if (idIndex >= 0 && idIndex < pathParts.length - 1) {
           // 提取并处理路径中的所有剩余部分
           const remainingParts = pathParts.slice(idIndex + 1);
-          
-          // 添加每个部分作为面包屑项
-          remainingParts.forEach((part, index) => {
-            const decodedPart = decodeURIComponent(part);
-            
-            if (index === remainingParts.length - 1) {
-              // 最后一项不可点击
-              items.push({
-                title: <span>{decodedPart}</span>,
-                key: `breadcrumb-${index}`
-              });
-            } else {
-              // 构建到当前部分的路径
-              const pathToHere = `/projects/${id}/${remainingParts.slice(0, index + 1).join('/')}`;
-              items.push({
-                title: <Link to={pathToHere}>{decodedPart}</Link>,
-                key: `breadcrumb-${index}`
-              });
-            }
-          });
+
+          if (remainingParts.length > 0) {
+            const lastPart = decodeURIComponent(remainingParts[remainingParts.length - 1]);
+            items.push({
+              title: <span>{lastPart}</span>,
+              key: `breadcrumb-${remainingParts.length - 1}`
+            });
+          }
         }
       }
     }
