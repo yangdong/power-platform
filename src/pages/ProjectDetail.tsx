@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Row, Col, Card, Button, Descriptions, Divider, Statistic, Space, Empty, Tag } from 'antd';
+import { Row, Col, Card, Button, Descriptions, Divider, Statistic, Space, Empty, Tag, List } from 'antd';
 import { 
   ArrowLeftOutlined, 
   TeamOutlined,
@@ -8,10 +8,46 @@ import {
   ThunderboltOutlined,
   PercentageOutlined,
   EnvironmentOutlined,
-  AppstoreOutlined
+  AppstoreOutlined,
+  RightOutlined,
+  ApiOutlined,
+  BulbOutlined,
+  DatabaseOutlined,
+  RocketOutlined
 } from '@ant-design/icons';
 import { projects, clients, Project, Client, ModuleType } from '../mock/data';
 import { getStatusTag, getTypeTag } from '../utils/helpers';
+
+// 各模块图标映射
+const moduleIcons: Record<ModuleType, React.ReactNode> = {
+  '源': <ThunderboltOutlined style={{ fontSize: 24 }} />,
+  '网': <ApiOutlined style={{ fontSize: 24 }} />,
+  '荷': <BulbOutlined style={{ fontSize: 24 }} />,
+  '储': <DatabaseOutlined style={{ fontSize: 24 }} />,
+  '充': <RocketOutlined style={{ fontSize: 24 }} />
+};
+
+// 模块子菜单配置
+const moduleSubMenus: Record<ModuleType, { name: string, firstPage: string }[]> = {
+  '源': [
+    { name: '光伏对接', firstPage: '光伏综合看板' }
+  ],
+  '网': [
+    { name: '能耗统计系统', firstPage: '仪表信息' },
+    { name: '能耗分析', firstPage: '网关设备管理' }
+  ],
+  '荷': [
+    { name: '智能照明系统', firstPage: '网关设备' },
+    { name: '电梯节能系统', firstPage: '节电综合概览' },
+    { name: '空调管理', firstPage: '水冷空调接入' }
+  ],
+  '储': [
+    { name: '储能', firstPage: '储能' }
+  ],
+  '充': [
+    { name: '充电桩', firstPage: '充电桩看板' }
+  ]
+};
 
 const ProjectDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -56,6 +92,11 @@ const ProjectDetail: React.FC = () => {
     if (client) {
       navigate(`/clients/${client.id}`);
     }
+  };
+
+  // 导航到项目模块页面
+  const goToModulePage = (module: ModuleType, subModule: string, page: string) => {
+    navigate(`/projects/module/${id}/${module}/${subModule}/${page}`);
   };
 
   // Map the project type to a human-readable name in Chinese
@@ -251,6 +292,58 @@ const ProjectDetail: React.FC = () => {
             ) : (
               <Empty description="无关联客户信息" />
             )}
+          </Card>
+        </Col>
+      </Row>
+
+      <Divider />
+      
+      <Row gutter={[16, 16]}>
+        <Col span={24}>
+          <Card 
+            title={
+              <div style={{ display: 'flex', alignItems: 'center' }}>
+                <AppstoreOutlined style={{ marginRight: 8 }} />
+                <span>项目模块</span>
+              </div>
+            } 
+            bordered={false}
+          >
+            <List
+              grid={{ gutter: 24, xs: 1, sm: 2, md: 3, lg: 3, xl: 4, xxl: 5 }}
+              dataSource={project.modules}
+              renderItem={(module) => (
+                <List.Item>
+                  <Card
+                    title={
+                      <div style={{ display: 'flex', alignItems: 'center' }}>
+                        {moduleIcons[module]}
+                        <span style={{ marginLeft: 8 }}>
+                          <Tag color={getModuleTagColor(module)}>{module}</Tag>
+                        </span>
+                      </div>
+                    }
+                  >
+                    <List
+                      size="small"
+                      dataSource={moduleSubMenus[module]}
+                      renderItem={(subMenu) => (
+                        <List.Item>
+                          <Button 
+                            type="link" 
+                            icon={<RightOutlined />} 
+                            onClick={() => goToModulePage(module, subMenu.name, subMenu.firstPage)}
+                            style={{ padding: 0, display: 'flex', alignItems: 'center' }}
+                          >
+                            {subMenu.name}
+                          </Button>
+                        </List.Item>
+                      )}
+                    />
+                  </Card>
+                </List.Item>
+              )}
+            />
           </Card>
         </Col>
       </Row>
