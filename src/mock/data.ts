@@ -48,6 +48,9 @@ export const clients: Client[] = [
   },
 ];
 
+// 项目模块类型
+export type ModuleType = '源' | '网' | '荷' | '储' | '充';
+
 // Mock projects data
 export interface Project {
   id: string;
@@ -66,6 +69,7 @@ export interface Project {
   efficiency: number; // percentage
   annualOutput: number; // MWh
   carbonReduction: number; // tons of CO2
+  modules: ModuleType[]; // 项目模块
 }
 
 export const projects: Project[] = [
@@ -86,6 +90,7 @@ export const projects: Project[] = [
     efficiency: 87,
     annualOutput: 87600,
     carbonReduction: 43800,
+    modules: ['源', '网', '储']
   },
   {
     id: '2',
@@ -104,6 +109,7 @@ export const projects: Project[] = [
     efficiency: 92,
     annualOutput: 131400,
     carbonReduction: 65700,
+    modules: ['源', '网', '荷']
   },
   {
     id: '3',
@@ -122,6 +128,7 @@ export const projects: Project[] = [
     efficiency: 78,
     annualOutput: 45552,
     carbonReduction: 22776,
+    modules: ['源', '网']
   },
   {
     id: '4',
@@ -140,6 +147,7 @@ export const projects: Project[] = [
     efficiency: 89,
     annualOutput: 104226,
     carbonReduction: 52113,
+    modules: ['源', '网', '储', '充']
   },
   {
     id: '5',
@@ -158,6 +166,7 @@ export const projects: Project[] = [
     efficiency: 94,
     annualOutput: 83106,
     carbonReduction: 41553,
+    modules: ['源', '网', '荷', '储']
   },
   {
     id: '6',
@@ -176,6 +185,7 @@ export const projects: Project[] = [
     efficiency: 85,
     annualOutput: 66742,
     carbonReduction: 33371,
+    modules: ['源', '网', '储', '充']
   },
   {
     id: '7',
@@ -194,6 +204,7 @@ export const projects: Project[] = [
     efficiency: 90,
     annualOutput: 140160,
     carbonReduction: 70080,
+    modules: ['源', '网', '荷']
   },
   {
     id: '8',
@@ -212,6 +223,7 @@ export const projects: Project[] = [
     efficiency: 82,
     annualOutput: 40150,
     carbonReduction: 20075,
+    modules: ['源', '网', '荷', '储', '充']
   },
   {
     id: '9',
@@ -230,6 +242,7 @@ export const projects: Project[] = [
     efficiency: 75,
     annualOutput: 51450,
     carbonReduction: 25725,
+    modules: ['源', '网', '荷']
   },
   {
     id: '10',
@@ -248,10 +261,11 @@ export const projects: Project[] = [
     efficiency: 88,
     annualOutput: 94886,
     carbonReduction: 47443,
+    modules: ['源', '网', '荷', '储', '充']
   },
 ];
 
-// Dashboard statistics
+// Dashboard stats
 export const dashboardStats = {
   totalClients: clients.length,
   totalProjects: projects.length,
@@ -264,6 +278,14 @@ export const dashboardStats = {
     biomass: projects.filter(p => p.type === 'biomass').length,
     geothermal: projects.filter(p => p.type === 'geothermal').length,
   },
-  totalCarbonReduction: projects.reduce((sum, project) => sum + project.carbonReduction, 0),
+  // 模块统计
+  moduleStats: {
+    '源': projects.filter(p => p.modules.includes('源')).length,
+    '网': projects.filter(p => p.modules.includes('网')).length,
+    '荷': projects.filter(p => p.modules.includes('荷')).length,
+    '储': projects.filter(p => p.modules.includes('储')).length,
+    '充': projects.filter(p => p.modules.includes('充')).length,
+  },
   totalAnnualOutput: projects.reduce((sum, project) => sum + project.annualOutput, 0),
+  totalCarbonReduction: projects.reduce((sum, project) => sum + project.carbonReduction, 0),
 }; 

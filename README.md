@@ -1,46 +1,19 @@
-# Getting Started with Create React App
+# 项目
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+这是一个能源管理的软件，帮助运营方对接客户的能源管理需求，每个客户可以有多个项目对接。软件的基本结构是：
 
-## Available Scripts
+1. 【运营方】需要一个大屏能够看到所有项目的汇总情况
+   1. 中间需要一个地图组建，显示所有的项目
+2. 【运营方】能够看到所有的客户
+3. 【运营方】能够看到所有的项目
+4. 【客户】可以有多个项目
 
-In the project directory, you can run:
+## 软件的要求
 
-### `npm start`
-
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
-
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
-
-### `npm test`
-
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
-### `npm run build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
+1. 按照nocobase的风格设计软件
+2. 菜单可以有以下两种设计，或者混用均可
+   1. 顶部菜单
+      1. 多级菜单popup在旁边展开
+   2. 左侧边栏菜单
+      1. 多级菜单就像目录一样展开
+3. 页面类似于积木搭建的多block。  

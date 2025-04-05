@@ -1,12 +1,35 @@
 import React, { useState, useEffect } from 'react';
-import { Table, Card, Button, Space, Tag, Modal, Form, Input, Select, InputNumber, DatePicker, Row, Col, Statistic, Divider, Tabs } from 'antd';
-import { PlusOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
-import { projects, Project, clients } from '../mock/data';
+import { Table, Card, Button, Space, Tag, Modal, Form, Input, Select, InputNumber, DatePicker, Row, Col, Statistic, Divider, Tabs, Checkbox } from 'antd';
+import { PlusOutlined, EditOutlined, DeleteOutlined, AppstoreOutlined } from '@ant-design/icons';
+import { projects, Project, clients, ModuleType } from '../mock/data';
 import { useLocation, useNavigate } from 'react-router-dom';
 import moment from 'moment';
+import { getStatusTag, getTypeTag } from '../utils/helpers';
 
 const { TabPane } = Tabs;
 const { Option } = Select;
+
+// 模块选项
+const moduleOptions = [
+  { label: '源', value: '源' },
+  { label: '网', value: '网' },
+  { label: '荷', value: '荷' },
+  { label: '储', value: '储' },
+  { label: '充', value: '充' },
+];
+
+// 获取模块标签颜色
+const getModuleTagColor = (module: ModuleType): string => {
+  const colorMap: Record<ModuleType, string> = {
+    '源': 'volcano',
+    '网': 'geekblue',
+    '荷': 'purple',
+    '储': 'gold',
+    '充': 'green'
+  };
+  
+  return colorMap[module] || 'default';
+};
 
 const Projects: React.FC = () => {
   const [form] = Form.useForm();
@@ -47,10 +70,19 @@ const Projects: React.FC = () => {
         ...project,
         startDate: moment(project.startDate),
         clientId: project.clientId,
+        modules: project.modules,
+        // 解构位置信息
+        address: project.location.address,
+        latitude: project.location.latitude,
+        longitude: project.location.longitude,
       });
     } else {
       setEditingProject(null);
       form.resetFields();
+      // 设置默认值
+      form.setFieldsValue({
+        modules: ['源', '网'], // 默认选择源和网模块
+      });
     }
     setIsModalVisible(true);
   };
@@ -73,6 +105,8 @@ const Projects: React.FC = () => {
           latitude: values.latitude,
           longitude: values.longitude,
         },
+        // 确保模块属性存在
+        modules: values.modules || [],
       };
       
       // Remove the separate location fields that aren't in the project structure
@@ -128,7 +162,11 @@ const Projects: React.FC = () => {
       title: '项目名称',
       dataIndex: 'name',
       key: 'name',
-      render: (text: string) => <span className="link-style">{text}</span>,
+      render: (text: string, record: Project) => (
+        <span className="link-style" onClick={() => navigate(`/projects/detail/${record.id}`)}>
+          {text}
+        </span>
+      ),
     },
     {
       title: '客户',
@@ -139,18 +177,24 @@ const Projects: React.FC = () => {
       title: '类型',
       dataIndex: 'type',
       key: 'type',
-      render: (type: Project['type']) => {
-        let color = '';
-        switch(type) {
-          case 'solar': color = 'gold'; break;
-          case 'wind': color = 'blue'; break;
-          case 'hydro': color = 'green'; break;
-          case 'biomass': color = 'orange'; break;
-          case 'geothermal': color = 'red'; break;
-          default: color = 'default';
-        }
-        return <Tag color={color}>{type}</Tag>;
-      },
+      render: (type: Project['type']) => getTypeTag(type),
+    },
+    {
+      title: '模块',
+      dataIndex: 'modules',
+      key: 'modules',
+      render: (modules: ModuleType[]) => (
+        <Space>
+          {modules.map(module => (
+            <Tag key={module} color={getModuleTagColor(module)}>
+              {module}
+            </Tag>
+          ))}
+        </Space>
+      ),
+      filters: moduleOptions.map(option => ({ text: option.label, value: option.value })),
+      onFilter: (value: any, record: Project) => 
+        record.modules.includes(value as ModuleType),
     },
     {
       title: '容量 (MW)',
@@ -169,17 +213,7 @@ const Projects: React.FC = () => {
       title: '状态',
       dataIndex: 'status',
       key: 'status',
-      render: (status: Project['status']) => {
-        let color = '';
-        switch(status) {
-          case 'planning': color = 'blue'; break;
-          case 'construction': color = 'orange'; break;
-          case 'operational': color = 'green'; break;
-          case 'maintenance': color = 'red'; break;
-          default: color = 'default';
-        }
-        return <Tag color={color}>{status}</Tag>;
-      },
+      render: (status: Project['status']) => getStatusTag(status),
       filters: [
         { text: '规划中', value: 'planning' },
         { text: '建设中', value: 'construction' },
@@ -396,6 +430,33 @@ const Projects: React.FC = () => {
                 rules={[{ required: true, message: '请选择开始日期' }]}
               >
                 <DatePicker style={{ width: '100%' }} />
+              </Form.Item>
+            </Col>
+          </Row>
+          
+          <Row gutter={16}>
+            <Col span={24}>
+              <Form.Item
+                name="modules"
+                label={
+                  <Space>
+                    <AppstoreOutlined />
+                    <span>模块配置（最多选择5个）</span>
+                  </Space>
+                }
+                rules={[
+                  { required: true, message: '请选择至少一个模块' },
+                  {
+                    validator: (_, value) => {
+                      if (value && value.length > 5) {
+                        return Promise.reject('最多选择5个模块');
+                      }
+                      return Promise.resolve();
+                    }
+                  }
+                ]}
+              >
+                <Checkbox.Group options={moduleOptions} />
               </Form.Item>
             </Col>
           </Row>

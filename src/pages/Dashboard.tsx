@@ -10,6 +10,8 @@ import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { dashboardStats, projects, Project } from '../mock/data';
+import { getStatusTag, getTypeTag } from '../utils/helpers';
+import { useNavigate } from 'react-router-dom';
 
 // Fix Leaflet icon issue
 delete (L.Icon.Default.prototype as any)._getIconUrl;
@@ -57,94 +59,65 @@ const getProjectIcon = (type: Project['type']) => {
   });
 };
 
-// Status tags for the table
-const getStatusTag = (status: Project['status']) => {
-  let color = '';
-  
-  switch(status) {
-    case 'planning':
-      color = 'blue';
-      break;
-    case 'construction':
-      color = 'orange';
-      break;
-    case 'operational':
-      color = 'green';
-      break;
-    case 'maintenance':
-      color = 'red';
-      break;
-    default:
-      color = 'default';
-  }
-  
-  return <Tag color={color}>{status}</Tag>;
-};
-
-// Type tags for the table
-const getTypeTag = (type: Project['type']) => {
-  let color = '';
-  
-  switch(type) {
-    case 'solar':
-      color = 'gold';
-      break;
-    case 'wind':
-      color = 'blue';
-      break;
-    case 'hydro':
-      color = 'green';
-      break;
-    case 'biomass':
-      color = 'orange';
-      break;
-    case 'geothermal':
-      color = 'red';
-      break;
-    default:
-      color = 'default';
-  }
-  
-  return <Tag color={color}>{type}</Tag>;
-};
-
-// Table columns
-const columns = [
-  {
-    title: '项目名称',
-    dataIndex: 'name',
-    key: 'name',
-  },
-  {
-    title: '客户',
-    dataIndex: 'clientName',
-    key: 'clientName',
-  },
-  {
-    title: '类型',
-    dataIndex: 'type',
-    key: 'type',
-    render: (type: Project['type']) => getTypeTag(type),
-  },
-  {
-    title: '状态',
-    dataIndex: 'status',
-    key: 'status',
-    render: (status: Project['status']) => getStatusTag(status),
-  },
-  {
-    title: '装机容量 (MW)',
-    dataIndex: 'capacity',
-    key: 'capacity',
-  },
-  {
-    title: '年发电量 (MWh)',
-    dataIndex: 'annualOutput',
-    key: 'annualOutput',
-  },
-];
-
 const Dashboard: React.FC = () => {
+  const navigate = useNavigate();
+  const [loading, setLoading] = useState(true);
+  
+  // Simulate loading data
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 1000);
+    
+    return () => clearTimeout(timer);
+  }, []);
+  
+  // Table columns - Moved inside the component to access navigate
+  const columns = [
+    {
+      title: '项目名称',
+      dataIndex: 'name',
+      key: 'name',
+      render: (text: string, record: Project) => (
+        <span className="link-style" onClick={() => navigate(`/projects/detail/${record.id}`)}>
+          {text}
+        </span>
+      ),
+    },
+    {
+      title: '客户',
+      dataIndex: 'clientName',
+      key: 'clientName',
+      render: (text: string, record: Project) => (
+        <span className="link-style" onClick={() => navigate(`/clients/${record.clientId}`)}>
+          {text}
+        </span>
+      ),
+    },
+    {
+      title: '类型',
+      dataIndex: 'type',
+      key: 'type',
+      render: (type: Project['type']) => getTypeTag(type),
+    },
+    {
+      title: '状态',
+      dataIndex: 'status',
+      key: 'status',
+      render: (status: Project['status']) => getStatusTag(status),
+    },
+    {
+      title: '装机容量 (MW)',
+      dataIndex: 'capacity',
+      key: 'capacity',
+    },
+    {
+      title: '年发电量 (MWh)',
+      dataIndex: 'annualOutput',
+      key: 'annualOutput',
+    },
+  ];
+  
   // Calculate the center of the map based on all project coordinates
   const calculateMapCenter = () => {
     if (projects.length === 0) return [35.8617, 104.1954]; // Default to center of China
@@ -156,16 +129,6 @@ const Dashboard: React.FC = () => {
   };
   
   const mapCenter = calculateMapCenter();
-  const [loading, setLoading] = useState(true);
-  
-  // Simulate loading data
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setLoading(false);
-    }, 1000);
-    
-    return () => clearTimeout(timer);
-  }, []);
   
   return (
     <div className="dashboard">
@@ -229,8 +192,21 @@ const Dashboard: React.FC = () => {
                   >
                     <Popup>
                       <div>
-                        <h3>{project.name}</h3>
-                        <p><strong>客户:</strong> {project.clientName}</p>
+                        <h3 
+                          style={{ cursor: 'pointer', color: '#1890ff' }}
+                          onClick={() => navigate(`/projects/detail/${project.id}`)}
+                        >
+                          {project.name}
+                        </h3>
+                        <p>
+                          <strong>客户:</strong>{' '}
+                          <span 
+                            style={{ cursor: 'pointer', color: '#1890ff' }}
+                            onClick={() => navigate(`/clients/${project.clientId}`)}
+                          >
+                            {project.clientName}
+                          </span>
+                        </p>
                         <p><strong>类型:</strong> {project.type}</p>
                         <p><strong>装机容量:</strong> {project.capacity} MW</p>
                         <p><strong>效率:</strong> {project.efficiency}%</p>
@@ -322,6 +298,52 @@ const Dashboard: React.FC = () => {
               valueStyle={{ color: '#3f8600' }}
               style={{ marginTop: '16px' }}
             />
+          </Card>
+        </Col>
+      </Row>
+
+      <Divider />
+      
+      <Row gutter={[16, 16]}>
+        <Col span={24}>
+          <Card title="项目模块分布" bordered={false}>
+            <Row gutter={[16, 16]}>
+              <Col xs={12} sm={8} md={4} lg={4}>
+                <Statistic 
+                  title={<Tag color="volcano">源</Tag>} 
+                  value={dashboardStats.moduleStats['源']} 
+                  suffix={`/ ${dashboardStats.totalProjects}`} 
+                />
+              </Col>
+              <Col xs={12} sm={8} md={4} lg={4}>
+                <Statistic 
+                  title={<Tag color="geekblue">网</Tag>} 
+                  value={dashboardStats.moduleStats['网']} 
+                  suffix={`/ ${dashboardStats.totalProjects}`} 
+                />
+              </Col>
+              <Col xs={12} sm={8} md={4} lg={4}>
+                <Statistic 
+                  title={<Tag color="purple">荷</Tag>} 
+                  value={dashboardStats.moduleStats['荷']} 
+                  suffix={`/ ${dashboardStats.totalProjects}`} 
+                />
+              </Col>
+              <Col xs={12} sm={8} md={4} lg={4}>
+                <Statistic 
+                  title={<Tag color="gold">储</Tag>} 
+                  value={dashboardStats.moduleStats['储']} 
+                  suffix={`/ ${dashboardStats.totalProjects}`} 
+                />
+              </Col>
+              <Col xs={12} sm={8} md={4} lg={4}>
+                <Statistic 
+                  title={<Tag color="green">充</Tag>} 
+                  value={dashboardStats.moduleStats['充']} 
+                  suffix={`/ ${dashboardStats.totalProjects}`} 
+                />
+              </Col>
+            </Row>
           </Card>
         </Col>
       </Row>

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Table, Card, Button, Space, Tag, Modal, Form, Input, Row, Col, Statistic, Divider } from 'antd';
 import { PlusOutlined, EditOutlined, DeleteOutlined, ProjectOutlined } from '@ant-design/icons';
 import { clients, Client } from '../mock/data';
+import { useNavigate } from 'react-router-dom';
 
 const Clients: React.FC = () => {
   const [form] = Form.useForm();
@@ -9,6 +10,7 @@ const Clients: React.FC = () => {
   const [editingClient, setEditingClient] = useState<Client | null>(null);
   const [clientsList, setClientsList] = useState<Client[]>(clients);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   // Simulate loading data
   useEffect(() => {
@@ -72,13 +74,22 @@ const Clients: React.FC = () => {
     });
   };
 
+  // 导航到客户详情页
+  const goToClientDetail = (clientId: string) => {
+    navigate(`/clients/${clientId}`);
+  };
+
   // Table columns
   const columns = [
     {
       title: '客户名称',
       dataIndex: 'name',
       key: 'name',
-      render: (text: string) => <span className="link-style">{text}</span>,
+      render: (text: string, record: Client) => (
+        <span className="link-style" onClick={() => goToClientDetail(record.id)}>
+          {text}
+        </span>
+      ),
     },
     {
       title: '联系人',
