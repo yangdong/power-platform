@@ -364,8 +364,9 @@ const ProjectLayout: React.FC = () => {
             )}
             {/* 菜单滚动容器 */}
             <div style={{ 
-              height: 'calc(100%)', 
+              height: 'calc(100% - 48px)', 
               overflow: 'auto',
+              paddingBottom: '60px'
             }}>
               <Menu
                 theme="dark"

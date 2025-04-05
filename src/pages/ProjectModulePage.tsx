@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { Card, Empty, Spin, Result, Button } from 'antd';
 import { projects, Project, ModuleType } from '../mock/data';
+import SolarDashboard from '../components/solar/SolarDashboard';
 
 // 定义模块页面展示内容
 interface ModulePageContentProps {
@@ -12,7 +13,12 @@ interface ModulePageContentProps {
 }
 
 const ModulePageContent: React.FC<ModulePageContentProps> = ({ project, module, subModule, page }) => {
-  // 在实际应用中，这里应该根据 module, subModule 和 page 来获取并渲染不同的内容
+  // 源-光伏对接-光伏综合看板
+  if (module === '源' && subModule === '光伏对接' && page === '光伏综合看板') {
+    return <SolarDashboard projectId={project.id} />;
+  }
+  
+  // 其他模块页面
   return (
     <Card title={`${subModule} - ${page}`}>
       <p>这是项目 <strong>{project.name}</strong> 的 <strong>{module}</strong> 模块下的 <strong>{subModule}</strong> 功能中的 <strong>{page}</strong> 页面。</p>
