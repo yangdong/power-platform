@@ -1,10 +1,6 @@
-import React, { useState, useEffect, ReactNode } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Layout, Menu, Button, theme, Dropdown, Avatar, Breadcrumb, Spin } from 'antd';
 import { 
-  MenuFoldOutlined, 
-  MenuUnfoldOutlined, 
-  DashboardOutlined, 
-  TeamOutlined, 
   ProjectOutlined,
   UserOutlined,
   SettingOutlined,
@@ -115,7 +111,18 @@ const ProjectLayout: React.FC = () => {
   const generateMenuItems = () => {
     if (!project) return [];
 
-    return project.modules.map(moduleName => {
+    // 首页菜单项（项目详情）
+    const menuItems: any[] = [
+      {
+        key: 'project-home',
+        icon: <HomeOutlined />,
+        label: '首页',
+        onClick: () => navigate(`/projects/${id}`)
+      }
+    ];
+
+    // 添加模块菜单
+    project.modules.forEach(moduleName => {
       const moduleConfig = moduleMenuItems[moduleName];
       
       // 生成子菜单
@@ -128,29 +135,30 @@ const ProjectLayout: React.FC = () => {
             key: `${moduleName}-${subMenuName}-${item}`,
             label: item,
             onClick: () => {
-              navigate(`/projects/module/${id}/${moduleName}/${subMenuName}/${item}`);
+              // 确保URL中的中文字符被正确编码
+              const encodedModule = encodeURIComponent(moduleName);
+              const encodedSubModule = encodeURIComponent(subMenuName);
+              const encodedPage = encodeURIComponent(item);
+              navigate(`/projects/${id}/${encodedModule}/${encodedSubModule}/${encodedPage}`);
             }
           }))
         });
       });
 
-      return {
+      menuItems.push({
         key: moduleName,
         icon: moduleConfig.icon,
         label: moduleName,
         children
-      };
+      });
     });
+
+    return menuItems;
   };
 
   // Handle navigation back to projects list
   const handleBackToProjects = () => {
     navigate('/projects');
-  };
-
-  // 导航到项目详情页
-  const handleBackToProject = () => {
-    navigate(`/projects/detail/${id}`);
   };
 
   // Generate breadcrumb items
@@ -167,35 +175,48 @@ const ProjectLayout: React.FC = () => {
     ];
 
     if (project) {
-      items.push({
-        title: <Link to={`/projects/detail/${id}`}>{project.name}</Link>,
-        key: 'project-detail'
-      });
-      
-      // 获取当前选中的菜单项
-      const pathParts = location.pathname.split('/');
-      const modulePart = pathParts[pathParts.length - 3]; // 适应新的URL格式
-      const subModulePart = pathParts[pathParts.length - 2];
-      const pagePart = pathParts[pathParts.length - 1];
-      
-      if (modulePart && modulePart !== 'detail') {
+      // 添加项目名称作为面包屑项
+      if (location.pathname === `/projects/${id}`) {
+        // 如果是项目首页，项目名称作为末级面包屑
         items.push({
-          title: <span>{modulePart}</span>,
-          key: modulePart
+          title: <span>{project.name}</span>,
+          key: 'project-detail'
+        });
+      } else {
+        // 如果是模块页面，项目名称作为可点击的面包屑
+        items.push({
+          title: <Link to={`/projects/${id}`}>{project.name}</Link>,
+          key: 'project-detail'
         });
         
-        if (subModulePart) {
-          items.push({
-            title: <span>{subModulePart}</span>,
-            key: subModulePart
+        // 解析URL路径
+        const pathParts = location.pathname.split('/').filter(part => part);
+        
+        // 找到项目ID后的部分
+        const idIndex = pathParts.findIndex(part => part === id);
+        if (idIndex >= 0 && idIndex < pathParts.length - 1) {
+          // 提取并处理路径中的所有剩余部分
+          const remainingParts = pathParts.slice(idIndex + 1);
+          
+          // 添加每个部分作为面包屑项
+          remainingParts.forEach((part, index) => {
+            const decodedPart = decodeURIComponent(part);
+            
+            if (index === remainingParts.length - 1) {
+              // 最后一项不可点击
+              items.push({
+                title: <span>{decodedPart}</span>,
+                key: `breadcrumb-${index}`
+              });
+            } else {
+              // 构建到当前部分的路径
+              const pathToHere = `/projects/${id}/${remainingParts.slice(0, index + 1).join('/')}`;
+              items.push({
+                title: <Link to={pathToHere}>{decodedPart}</Link>,
+                key: `breadcrumb-${index}`
+              });
+            }
           });
-
-          if (pagePart) {
-            items.push({
-              title: <span>{pagePart}</span>,
-              key: pagePart
-            });
-          }
         }
       }
     }
@@ -206,13 +227,30 @@ const ProjectLayout: React.FC = () => {
   // Get current active menu item based on path
   const getSelectedKey = () => {
     const path = location.pathname;
-    const pathParts = path.split('/');
-    // 取最后两部分作为选择键
-    if (pathParts.length >= 5) {
-      const modulePart = pathParts[pathParts.length - 2];
-      const pagePart = pathParts[pathParts.length - 1];
-      return [`${modulePart}-${pagePart}`];
+    
+    // 如果是项目首页
+    if (path === `/projects/${id}`) {
+      return ['project-home'];
     }
+    
+    // 如果是模块页面
+    const pathParts = path.split('/').filter(part => part);
+    const idIndex = pathParts.findIndex(part => part === id);
+    
+    if (idIndex >= 0 && idIndex + 3 < pathParts.length) {
+      // 解码URL参数
+      const encodedModule = pathParts[idIndex + 1];
+      const encodedSubModule = pathParts[idIndex + 2];
+      const encodedPage = pathParts[idIndex + 3];
+      
+      const module = decodeURIComponent(encodedModule);
+      const subModule = decodeURIComponent(encodedSubModule);
+      const page = decodeURIComponent(encodedPage);
+      
+      // 返回完整的菜单项键
+      return [`${module}-${subModule}-${page}`];
+    }
+    
     return [];
   };
 
@@ -270,7 +308,7 @@ const ProjectLayout: React.FC = () => {
       >
         <div style={{ display: 'flex', alignItems: 'center', width: '100%' }}>
           <div style={{ fontSize: '18px', fontWeight: 'bold', padding: '0 24px', display: 'flex', alignItems: 'center' }}>
-            <Button type="link" onClick={handleBackToProject} icon={<ProjectOutlined />} style={{ paddingLeft: 0 }}>
+            <Button type="link" onClick={handleBackToProjects} icon={<ProjectOutlined />} style={{ paddingLeft: 0 }}>
               {project.name}
             </Button>
           </div>
@@ -327,8 +365,8 @@ const ProjectLayout: React.FC = () => {
             <Menu
               theme="dark"
               mode="inline"
-              defaultOpenKeys={[project.modules[0]]}
-              defaultSelectedKeys={getSelectedKey()}
+              defaultOpenKeys={['project-home']}
+              selectedKeys={getSelectedKey()}
               items={menuItems}
               onClick={() => mobileView && setMobileMenuVisible(false)}
             />
@@ -355,7 +393,7 @@ const ProjectLayout: React.FC = () => {
               minHeight: 280,
               background: token.colorBgContainer,
               borderRadius: token.borderRadiusLG,
-              overflow: 'initial',
+              overflow: 'auto',
             }}
           >
             <Outlet />

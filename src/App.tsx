@@ -20,12 +20,14 @@ function App() {
           <Route path="clients" element={<Clients />} />
           <Route path="clients/:id" element={<ClientDetail />} />
           <Route path="projects" element={<Projects />} />
-          <Route path="projects/detail/:id" element={<ProjectDetail />} />
         </Route>
         
-        {/* 项目模块页面使用独立布局 */}
-        <Route path="projects/module/:id/:module/:subModule/:page" element={<ProjectLayout />}>
-          <Route index element={<ProjectModulePage />} />
+        {/* 项目布局 - 包含项目详情和模块页面 */}
+        <Route path="projects/:id" element={<ProjectLayout />}>
+          {/* 项目首页（项目详情） */}
+          <Route index element={<ProjectDetail />} />
+          {/* 项目模块页面 */}
+          <Route path=":module/:subModule/:page" element={<ProjectModulePage />} />
         </Route>
       </Routes>
     </Router>

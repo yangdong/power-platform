@@ -2,10 +2,13 @@
 export interface Client {
   id: string;
   name: string;
-  contact: string;
+  contact?: string;
+  contactPerson?: string;
+  contactTitle?: string;
   email: string;
   phone: string;
   address: string;
+  industry?: string;
   projectsCount: number;
 }
 
@@ -14,36 +17,48 @@ export const clients: Client[] = [
     id: '1',
     name: '北京能源集团',
     contact: '张三',
+    contactPerson: '张三',
+    contactTitle: '技术总监',
     email: 'zhangsan@example.com',
     phone: '13800000001',
     address: '北京市朝阳区',
+    industry: '能源',
     projectsCount: 3,
   },
   {
     id: '2',
     name: '上海电力有限公司',
     contact: '李四',
+    contactPerson: '李四',
+    contactTitle: '项目经理',
     email: 'lisi@example.com',
     phone: '13800000002',
     address: '上海市浦东新区',
+    industry: '电力',
     projectsCount: 2,
   },
   {
     id: '3',
     name: '广州新能源科技',
     contact: '王五',
+    contactPerson: '王五',
+    contactTitle: '总工程师',
     email: 'wangwu@example.com',
     phone: '13800000003',
     address: '广州市天河区',
+    industry: '新能源科技',
     projectsCount: 4,
   },
   {
     id: '4',
     name: '深圳绿色能源集团',
     contact: '赵六',
+    contactPerson: '赵六',
+    contactTitle: '执行总监',
     email: 'zhaoliu@example.com',
     phone: '13800000004',
     address: '深圳市南山区',
+    industry: '绿色能源',
     projectsCount: 1,
   },
 ];
@@ -65,11 +80,18 @@ export interface Project {
     longitude: number;
   };
   startDate: string;
+  endDate?: string;
   status: 'planning' | 'construction' | 'operational' | 'maintenance';
   efficiency: number; // percentage
   annualOutput: number; // MWh
   carbonReduction: number; // tons of CO2
   modules: ModuleType[]; // 项目模块
+  budget?: number;
+  manager?: string;
+  team?: string[];
+  createdAt?: string;
+  description?: string;
+  notes?: string;
 }
 
 export const projects: Project[] = [
@@ -86,11 +108,18 @@ export const projects: Project[] = [
       longitude: 116.4307,
     },
     startDate: '2023-01-15',
+    endDate: '2025-01-15',
     status: 'operational',
     efficiency: 87,
     annualOutput: 87600,
     carbonReduction: 43800,
-    modules: ['源', '网', '储']
+    modules: ['源', '网', '储'],
+    budget: 1500000,
+    manager: '李明',
+    team: ['李明', '王强', '张红', '赵伟'],
+    createdAt: '2022-11-10',
+    description: '这是位于北京朝阳区的大型太阳能项目，总装机容量50MW，年发电量达87600MWh，为周边区域提供清洁能源，减少碳排放。',
+    notes: '该项目采用最新的光伏技术，效率高，维护成本低。已与周边社区建立了良好的合作关系。'
   },
   {
     id: '2',
@@ -105,11 +134,18 @@ export const projects: Project[] = [
       longitude: 116.2534,
     },
     startDate: '2022-11-20',
+    endDate: '2025-11-20',
     status: 'operational',
     efficiency: 92,
     annualOutput: 131400,
     carbonReduction: 65700,
-    modules: ['源', '网', '荷']
+    modules: ['源', '网', '荷'],
+    budget: 2200000,
+    manager: '刘志强',
+    team: ['刘志强', '李小明', '陈华', '吴芳'],
+    createdAt: '2022-08-15',
+    description: '这是位于北京海淀区的风力发电项目，总装机容量75MW，年发电量达131400MWh，利用该区域丰富的风力资源，为北京地区提供清洁电力。',
+    notes: '风力资源评估良好，发电效率高于预期。需要注意季节性风向变化对发电量的影响。'
   },
   {
     id: '3',
@@ -124,11 +160,18 @@ export const projects: Project[] = [
       longitude: 116.6569,
     },
     startDate: '2023-05-10',
+    endDate: '2026-05-10',
     status: 'construction',
     efficiency: 78,
     annualOutput: 45552,
     carbonReduction: 22776,
-    modules: ['源', '网']
+    modules: ['源', '网'],
+    budget: 1200000,
+    manager: '张建国',
+    team: ['张建国', '王建华', '李梅'],
+    createdAt: '2023-02-03',
+    description: '这是位于北京通州区的生物质能发电项目，利用当地农业废弃物进行发电，总装机容量30MW，年发电量预计达45552MWh。',
+    notes: '需要建立稳定的生物质燃料供应链，与当地农业合作社保持良好关系以确保燃料供应。'
   },
   {
     id: '4',

@@ -55,7 +55,7 @@ const ClientDetail: React.FC = () => {
       dataIndex: 'name',
       key: 'name',
       render: (text: string, record: Project) => (
-        <a onClick={() => navigate(`/projects/detail/${record.id}`)}>{text}</a>
+        <a onClick={() => navigate(`/projects/${record.id}`)}>{text}</a>
       ),
     },
     {

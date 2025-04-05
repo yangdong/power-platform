@@ -38,7 +38,13 @@ const ModulePageContent: React.FC<ModulePageContentProps> = ({ project, module, 
 };
 
 const ProjectModulePage: React.FC = () => {
-  const { id, module, subModule, page } = useParams<{ id: string; module: string; subModule: string; page: string }>();
+  // 获取并解码URL参数
+  const params = useParams<{ id: string; module: string; subModule: string; page: string }>();
+  const id = params.id;
+  const module = params.module ? decodeURIComponent(params.module) : undefined;
+  const subModule = params.subModule ? decodeURIComponent(params.subModule) : undefined;
+  const page = params.page ? decodeURIComponent(params.page) : undefined;
+  
   const [loading, setLoading] = useState(true);
   const [project, setProject] = useState<Project | null>(null);
   const [error, setError] = useState<string | null>(null);

@@ -163,7 +163,7 @@ const Projects: React.FC = () => {
       dataIndex: 'name',
       key: 'name',
       render: (text: string, record: Project) => (
-        <span className="link-style" onClick={() => navigate(`/projects/detail/${record.id}`)}>
+        <span className="link-style" onClick={() => navigate(`/projects/${record.id}`)}>
           {text}
         </span>
       ),
