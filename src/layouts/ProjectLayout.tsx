@@ -342,8 +342,8 @@ const ProjectLayout: React.FC = () => {
             collapsed={collapsed}
             onCollapse={setCollapsed}
             style={{
-              overflow: 'auto',
-              height: '100vh',
+              overflow: 'hidden',
+              height: 'calc(100vh - 64px)',
               position: 'fixed',
               left: 0,
               top: 64,
@@ -362,14 +362,20 @@ const ProjectLayout: React.FC = () => {
                 </Dropdown>
               </div>
             )}
-            <Menu
-              theme="dark"
-              mode="inline"
-              defaultOpenKeys={['project-home']}
-              selectedKeys={getSelectedKey()}
-              items={menuItems}
-              onClick={() => mobileView && setMobileMenuVisible(false)}
-            />
+            {/* 菜单滚动容器 */}
+            <div style={{ 
+              height: 'calc(100%)', 
+              overflow: 'auto',
+            }}>
+              <Menu
+                theme="dark"
+                mode="inline"
+                defaultOpenKeys={['project-home']}
+                selectedKeys={getSelectedKey()}
+                items={menuItems}
+                onClick={() => mobileView && setMobileMenuVisible(false)}
+              />
+            </div>
           </Sider>
         )}
         <Layout style={{ 
