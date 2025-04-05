@@ -3,6 +3,9 @@ import { useParams } from 'react-router-dom';
 import { Card, Empty, Spin, Result, Button } from 'antd';
 import { projects, Project, ModuleType } from '../mock/data';
 import SolarDashboard from '../components/solar/SolarDashboard';
+import SolarMonitoring from '../components/solar/SolarMonitoring';
+import MeterInfo from '../components/energy/MeterInfo';
+import ConsumptionOverview from '../components/energy/ConsumptionOverview';
 
 // 定义模块页面展示内容
 interface ModulePageContentProps {
@@ -16,6 +19,21 @@ const ModulePageContent: React.FC<ModulePageContentProps> = ({ project, module, 
   // 源-光伏对接-光伏综合看板
   if (module === '源' && subModule === '光伏对接' && page === '光伏综合看板') {
     return <SolarDashboard projectId={project.id} />;
+  }
+  
+  // 源-光伏对接-光伏监控
+  if (module === '源' && subModule === '光伏对接' && page === '光伏监控') {
+    return <SolarMonitoring projectId={project.id} />;
+  }
+  
+  // 网-能耗统计系统-仪表信息
+  if (module === '网' && subModule === '能耗统计系统' && page === '仪表信息') {
+    return <MeterInfo projectId={project.id} />;
+  }
+  
+  // 网-能耗统计系统-能耗总览
+  if (module === '网' && subModule === '能耗统计系统' && page === '能耗总览') {
+    return <ConsumptionOverview projectId={project.id} />;
   }
   
   // 其他模块页面
