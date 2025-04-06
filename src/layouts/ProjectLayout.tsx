@@ -299,6 +299,9 @@ const ProjectLayout: React.FC = () => {
             <Button type="link" onClick={handleBackToProjects} icon={<ProjectOutlined />} style={{ paddingLeft: 0 }}>
               {project.name}
             </Button>
+            <Button type="primary" onClick={() => navigate(`/projects/${id}/bigscreen`)} style={{ marginLeft: '16px' }}>
+              进入大屏
+            </Button>
           </div>
           {mobileView ? (
             <Button 

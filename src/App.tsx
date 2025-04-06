@@ -9,6 +9,7 @@ import Projects from './pages/Projects';
 import ClientDetail from './pages/ClientDetail';
 import ProjectDetail from './pages/ProjectDetail';
 import ProjectModulePage from './pages/ProjectModulePage';
+import ProjectBigScreen from './pages/ProjectBigScreen';
 
 function App() {
   return (
@@ -29,6 +30,9 @@ function App() {
           {/* 项目模块页面 */}
           <Route path=":module/:subModule/:page" element={<ProjectModulePage />} />
         </Route>
+
+        {/* 项目大屏页面 - 独立路由 */}
+        <Route path="projects/:id/bigscreen" element={<ProjectBigScreen />} />
       </Routes>
     </Router>
   );

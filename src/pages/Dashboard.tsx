@@ -464,7 +464,12 @@ const Dashboard: React.FC = () => {
       if (projectName) {
         const project = projects.find(p => p.name === projectName);
         if (project) {
-          navigate(`/projects/${project.id}`);
+          // 检查Shift键是否被按下，如果是则导航到大屏页面
+          if (params.event.event.shiftKey) {
+            navigate(`/projects/${project.id}/bigscreen`);
+          } else {
+            navigate(`/projects/${project.id}`);
+          }
         }
       }
     }
@@ -598,6 +603,9 @@ const Dashboard: React.FC = () => {
             <div style={headerStyle}>
               <span>项目地图分布</span>
               <span style={{ fontSize: '0.8em', color: '#8bacce' }}>总数: {dashboardStats.totalProjects}</span>
+            </div>
+            <div style={{ fontSize: '0.8em', color: '#8bacce', marginBottom: '10px', textAlign: 'center' }}>
+              提示: 按住Shift键点击项目点可直接访问项目大屏
             </div>
             <div style={{ height: 'calc(100% - 50px)', width: '100%', position: 'relative' }}>
               {/* Map corner decorations */}
