@@ -1,20 +1,14 @@
-# Use node image
-FROM node:20-alpine
+# Production image using nginx
+FROM nginx:alpine
 
-# Set working directory
-WORKDIR /app
+# Copy already built files from local build directory to nginx serve directory
+COPY build/ /usr/share/nginx/html/
 
-# Copy package.json and package-lock.json
-COPY package.json package-lock.json ./
+# Copy custom nginx config to use port 9000
+COPY nginx.conf /etc/nginx/conf.d/default.conf
 
-# Install dependencies
-RUN npm ci
+# Expose port 9000
+EXPOSE 9000
 
-# Copy all files
-COPY . .
-
-# Expose port 3000 (default port for npm start)
-EXPOSE 3000
-
-# Start the app
-CMD ["npm", "start"]
+# Start nginx
+CMD ["nginx", "-g", "daemon off;"]
